@@ -2,6 +2,42 @@ Bootstrapping Code
 
 ```python
 import numpy as np  
+
+def bootstrap_confidence_interval(data, confidence=0.95, iterations=10000, seed=None):
+    """
+    Bootstrap confidence interval for the mean.
+
+    Parameters:
+        data : array-like
+            Input data
+        confidence : float
+            Confidence level (e.g. 0.95 for 95%, 0.90 for 90%)
+        iterations : int
+            Number of bootstrap samples
+        seed : int or None
+            Random seed for reproducibility
+
+    Returns:
+        (lower, upper) tuple
+            Confidence interval for the mean
+    """
+    if seed is not None:
+        np.random.seed(seed)
+
+    data = np.array(data)
+    n = len(data)
+
+    means = np.empty(iterations)
+
+    for i in range(iterations):
+        sample = np.random.choice(data, size=n, replace=True)
+        means[i] = np.mean(sample)
+
+    alpha = 1 - confidence
+    lower = np.percentile(means, 100 * (alpha / 2))
+    upper = np.percentile(means, 100 * (1 - alpha / 2))
+
+    return lower, upper
   
 def bootstrap_confidence_interval(data, iterations=1000):  
     """  
